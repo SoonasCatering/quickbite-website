@@ -1,38 +1,79 @@
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-
-export default function AdminPanel() {
-  const [menu, setMenu] = useState("Dagens meny här...");
-  const [contact, setContact] = useState("Kontaktinfo här...");
-  const [image, setImage] = useState(null);
-
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setImage(reader.result);
-      reader.readAsDataURL(file);
-    }
-  };
-
-  return (
-    <div className="p-4 max-w-lg mx-auto space-y-4">
-      <h1 className="text-xl font-bold">Adminpanel - QuickBite</h1>
-      <Card>
-        <CardContent className="p-4 space-y-2">
-          <label>Meny</label>
-          <Textarea value={menu} onChange={(e) => setMenu(e.target.value)} />
-          <label>Kontaktuppgifter</label>
-          <Input value={contact} onChange={(e) => setContact(e.target.value)} />
-          <label>Bild</label>
-          <Input type="file" onChange={handleImageUpload} />
-          {image && <img src={image} alt="Uploaded" className="w-full mt-2" />}
-          <Button className="mt-4">Spara ändringar</Button>
-        </CardContent>
-      </Card>
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - QuickBite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f3f3f3;
+            padding: 20px;
+        }
+        .menu-item {
+            background: white;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #8b0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Adminpanel - Uppdatera menyn</h2>
+    <div>
+        <input type="text" id="dish-name" placeholder="Rättens namn">
+        <input type="text" id="dish-description" placeholder="Beskrivning">
+        <button onclick="addDish()">Lägg till rätt</button>
     </div>
-  );
-}
+    <div id="menu-list"></div>
+    <button onclick="saveMenu()">💾 Spara meny</button>
+    
+    <script>
+        let menu = JSON.parse(localStorage.getItem("menu")) || [];
+        renderMenu();
+        
+        function renderMenu() {
+            let menuList = document.getElementById('menu-list');
+            menuList.innerHTML = "";
+            menu.forEach((item, index) => {
+                menuList.innerHTML += `<div class='menu-item'><h3>${item.name}</h3><p>${item.description}</p><button onclick='removeDish(${index})'>Ta bort</button></div>`;
+            });
+        }
+        
+        function addDish() {
+            let name = document.getElementById('dish-name').value;
+            let description = document.getElementById('dish-description').value;
+            if(name && description) {
+                menu.push({ name, description });
+                saveMenu();
+            }
+        }
+        
+        function removeDish(index) {
+            menu.splice(index, 1);
+            saveMenu();
+        }
+        
+        function saveMenu() {
+            localStorage.setItem("menu", JSON.stringify(menu));
+            renderMenu();
+            alert("Menyn har sparats!");
+        }
+    </script>
+</body>
+</html>
