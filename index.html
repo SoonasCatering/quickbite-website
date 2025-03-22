@@ -1,4 +1,4 @@
-<!DOCTYPE html>\>
+<!DOCTYPE html>
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
@@ -14,10 +14,14 @@
             padding: 0;
         }
         header {
-            background-color: #8b0000;
+            background-image: url('palestinian-food.jpg'); /* Lägg till en bild som symboliserar det palestinska köket */
+            background-size: cover;
+            background-position: center;
             color: white;
-            padding: 20px;
-            font-size: 24px;
+            padding: 40px;
+            font-size: 32px;
+            font-family: 'Georgia', serif;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
         }
         .menu, .contact, .gallery, .catering {
             margin: 20px;
@@ -44,7 +48,7 @@
 </head>
 <body>
     <header>
-        QuickBite - Palestinsk Street Food 🚚
+        QuickBite - Äkta Palestinsk Street Food 🚚
     </header>
 
     <div class="menu">
@@ -56,13 +60,19 @@
 
     <div class="catering">
         <h2>Boka Catering</h2>
-        <form>
-            <label>Antal gäster:</label>
-            <input type="number" id="guests" required><br>
+        <form id="catering-form">
+            <label>Antal gäster (minst 5):</label>
+            <input type="number" id="guests" min="5" required><br>
             <label>Datum:</label>
             <input type="date" id="date" required><br>
-            <label>Övrig info:</label>
+            <label>Önskemål:</label>
             <textarea id="info"></textarea><br>
+            <label>Namn:</label>
+            <input type="text" id="name" required><br>
+            <label>Telefon:</label>
+            <input type="tel" id="phone" required><br>
+            <label>E-post:</label>
+            <input type="email" id="email" required><br>
             <button type="submit">Skicka förfrågan</button>
         </form>
     </div>
@@ -74,14 +84,14 @@
 
     <div class="contact">
         <h2>Kontakt</h2>
-        <p>📍 Stockholm, Sverige</p>
+        <p>📍 Gävlegatan 12A, Stockholm, Sweden 11330</p>
         <p>📞 070-123 45 67</p>
         <p><a href="https://www.instagram.com/quickbite.se/" target="_blank">Följ oss på Instagram</a></p>
     </div>
 
     <div class="map">
         <h2>Hitta oss</h2>
-        <iframe src="https://www.google.com/maps/embed?..." width="100%" height="300"></iframe>
+        <iframe src="https://www.google.com/maps/embed/v1/place?q=Gävlegatan+12A,+Stockholm,+Sweden+11330&key=DIN_GOOGLE_MAPS_API_KEY" width="100%" height="300"></iframe>
     </div>
 
     <script>
@@ -92,6 +102,27 @@
         // Bildgalleri laddning
         let galleryContent = JSON.parse(localStorage.getItem("gallery")) || [];
         document.getElementById("gallery-content").innerHTML = galleryContent.map(img => `<img src="${img}" width="150">`).join('');
+
+        // Hantera cateringförfrågan
+        document.getElementById("catering-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let guests = document.getElementById("guests").value;
+            let date = document.getElementById("date").value;
+            let info = document.getElementById("info").value;
+            let name = document.getElementById("name").value;
+            let phone = document.getElementById("phone").value;
+            let email = document.getElementById("email").value;
+            
+            let mailtoLink = `mailto:quickbite@foodtruck.com?subject=Cateringförfrågan&body=
+                Namn: ${name}%0A
+                Telefon: ${phone}%0A
+                E-post: ${email}%0A
+                Antal gäster: ${guests}%0A
+                Datum: ${date}%0A
+                Önskemål: ${info}`;
+                
+            window.location.href = mailtoLink;
+        });
     </script>
 </body>
 </html>
