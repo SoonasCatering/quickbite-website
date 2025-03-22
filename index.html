@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>\>
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
@@ -19,28 +19,26 @@
             padding: 20px;
             font-size: 24px;
         }
-        .menu {
+        .menu, .contact, .gallery, .catering {
             margin: 20px;
-        }
-        .menu-item {
-            background: white;
             padding: 15px;
-            margin: 10px;
+            background: white;
             border-radius: 8px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .contact {
-            margin: 20px;
-            font-size: 18px;
+        .menu-item, .gallery-item {
+            margin: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
         }
-        .order-btn {
+        button {
             background-color: #8b0000;
             color: white;
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -48,32 +46,52 @@
     <header>
         QuickBite - Palestinsk Street Food 🚚
     </header>
+
     <div class="menu">
         <h2>Dagens meny</h2>
-        <div id="menu-list">
-            <p>Laddar dagens rätter...</p>
-        </div>
+        <div id="daily-menu">Laddar...</div>
+        <h2>Veckomeny</h2>
+        <div id="weekly-menu">Laddar...</div>
     </div>
-    <button class="order-btn" onclick="window.location.href='mailto:quickbite@foodtruck.com'">Beställ catering</button>
+
+    <div class="catering">
+        <h2>Boka Catering</h2>
+        <form>
+            <label>Antal gäster:</label>
+            <input type="number" id="guests" required><br>
+            <label>Datum:</label>
+            <input type="date" id="date" required><br>
+            <label>Övrig info:</label>
+            <textarea id="info"></textarea><br>
+            <button type="submit">Skicka förfrågan</button>
+        </form>
+    </div>
+
+    <div class="gallery">
+        <h2>Galleri</h2>
+        <div id="gallery-content">Laddar bilder...</div>
+    </div>
+
     <div class="contact">
+        <h2>Kontakt</h2>
         <p>📍 Stockholm, Sverige</p>
         <p>📞 070-123 45 67</p>
         <p><a href="https://www.instagram.com/quickbite.se/" target="_blank">Följ oss på Instagram</a></p>
     </div>
-    <script>
-        let menu = [
-            { name: "Maklouba", description: "Traditionell upp-och-nervänd risrätt med kyckling och grönsaker." },
-            { name: "Kefta med Tahini", description: "Ugnsbakad färsbiff med sesamsås och kryddor." },
-            { name: "Musakhan", description: "Saftigt kycklingbröd med karamelliserad lök och sumak." },
-            { name: "Bamyah Stew", description: "Mustig okragryta med tomatsås och lamm." },
-            { name: "Palestinsk Falafel", description: "Krispiga falafelbollar serverade med tahini." }
-        ];
 
-        let menuList = document.getElementById('menu-list');
-        menuList.innerHTML = "";
-        menu.forEach(item => {
-            menuList.innerHTML += `<div class='menu-item'><h3>${item.name}</h3><p>${item.description}</p></div>`;
-        });
+    <div class="map">
+        <h2>Hitta oss</h2>
+        <iframe src="https://www.google.com/maps/embed?..." width="100%" height="300"></iframe>
+    </div>
+
+    <script>
+        // Menyuppdatering från adminpanelen (via LocalStorage)
+        document.getElementById("daily-menu").innerHTML = localStorage.getItem("dailyMenu") || "Ingen meny tillgänglig";
+        document.getElementById("weekly-menu").innerHTML = localStorage.getItem("weeklyMenu") || "Ingen meny tillgänglig";
+
+        // Bildgalleri laddning
+        let galleryContent = JSON.parse(localStorage.getItem("gallery")) || [];
+        document.getElementById("gallery-content").innerHTML = galleryContent.map(img => `<img src="${img}" width="150">`).join('');
     </script>
 </body>
 </html>
