@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - QuickBite</title>
+    <title>Adminpanel - QuickBite</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,7 +11,7 @@
             background-color: #f3f3f3;
             padding: 20px;
         }
-        .menu-item {
+        .menu-item, .gallery-item {
             background: white;
             padding: 15px;
             margin: 10px;
@@ -27,52 +27,73 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        input {
+        input, textarea {
             padding: 8px;
             margin: 5px;
+            width: 80%;
         }
     </style>
 </head>
 <body>
-    <h2>Adminpanel - Uppdatera menyn</h2>
+    <h2>Adminpanel - Uppdatera hemsidan</h2>
+    
     <div>
-        <input type="text" id="dish-name" placeholder="Rättens namn">
-        <input type="text" id="dish-description" placeholder="Beskrivning">
-        <button onclick="addDish()">Lägg till rätt</button>
+        <h3>Uppdatera Dagens Meny</h3>
+        <textarea id="daily-menu-input" placeholder="Skriv dagens meny här..."></textarea><br>
+        <button onclick="saveDailyMenu()">Spara Dagens Meny</button>
     </div>
-    <div id="menu-list"></div>
-    <button onclick="saveMenu()">💾 Spara meny</button>
+    
+    <div>
+        <h3>Uppdatera Veckomeny</h3>
+        <textarea id="weekly-menu-input" placeholder="Skriv veckomenyn här..."></textarea><br>
+        <button onclick="saveWeeklyMenu()">Spara Veckomeny</button>
+    </div>
+    
+    <div>
+        <h3>Ladda upp Bild till Galleri</h3>
+        <input type="file" id="image-upload" accept="image/*"><br>
+        <button onclick="uploadImage()">Lägg till Bild</button>
+    </div>
+    
+    <h3>Nuvarande Bilder</h3>
+    <div id="gallery-preview">Inga bilder än...</div>
     
     <script>
-        let menu = JSON.parse(localStorage.getItem("menu")) || [];
-        renderMenu();
-        
-        function renderMenu() {
-            let menuList = document.getElementById('menu-list');
-            menuList.innerHTML = "";
-            menu.forEach((item, index) => {
-                menuList.innerHTML += `<div class='menu-item'><h3>${item.name}</h3><p>${item.description}</p><button onclick='removeDish(${index})'>Ta bort</button></div>`;
-            });
+        // Ladda sparad data
+        document.getElementById("daily-menu-input").value = localStorage.getItem("dailyMenu") || "";
+        document.getElementById("weekly-menu-input").value = localStorage.getItem("weeklyMenu") || "";
+
+        let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
+        renderGallery();
+
+        function saveDailyMenu() {
+            let menu = document.getElementById("daily-menu-input").value;
+            localStorage.setItem("dailyMenu", menu);
+            alert("Dagens meny har sparats!");
         }
         
-        function addDish() {
-            let name = document.getElementById('dish-name').value;
-            let description = document.getElementById('dish-description').value;
-            if(name && description) {
-                menu.push({ name, description });
-                saveMenu();
+        function saveWeeklyMenu() {
+            let menu = document.getElementById("weekly-menu-input").value;
+            localStorage.setItem("weeklyMenu", menu);
+            alert("Veckomenyn har sparats!");
+        }
+        
+        function uploadImage() {
+            let file = document.getElementById("image-upload").files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    gallery.push(e.target.result);
+                    localStorage.setItem("gallery", JSON.stringify(gallery));
+                    renderGallery();
+                };
+                reader.readAsDataURL(file);
             }
         }
         
-        function removeDish(index) {
-            menu.splice(index, 1);
-            saveMenu();
-        }
-        
-        function saveMenu() {
-            localStorage.setItem("menu", JSON.stringify(menu));
-            renderMenu();
-            alert("Menyn har sparats!");
+        function renderGallery() {
+            let galleryPreview = document.getElementById("gallery-preview");
+            galleryPreview.innerHTML = gallery.map(img => `<img src="${img}" width="100">`).join(' ');
         }
     </script>
 </body>
