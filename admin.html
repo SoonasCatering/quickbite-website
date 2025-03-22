@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - QuickBite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f3f3f3;
+            padding: 20px;
+        }
+        .menu-item {
+            background: white;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #8b0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Adminpanel - Uppdatera menyn</h2>
+    <div>
+        <input type="text" id="dish-name" placeholder="Rättens namn">
+        <input type="text" id="dish-description" placeholder="Beskrivning">
+        <button onclick="addDish()">Lägg till rätt</button>
+    </div>
+    <div id="menu-list"></div>
+    <script>
+        let menu = [];
+        
+        function loadMenu() {
+            fetch('menu.json')
+                .then(response => response.json())
+                .then(data => {
+                    menu = data;
+                    renderMenu();
+                });
+        }
+        
+        function renderMenu() {
+            let menuList = document.getElementById('menu-list');
+            menuList.innerHTML = "";
+            menu.forEach((item, index) => {
+                menuList.innerHTML += `<div class='menu-item'><h3>${item.name}</h3><p>${item.description}</p><button onclick='removeDish(${index})'>Ta bort</button></div>`;
+            });
+        }
+        
+        function addDish() {
+            let name = document.getElementById('dish-name').value;
+            let description = document.getElementById('dish-description').value;
+            if(name && description) {
+                menu.push({ name, description });
+                saveMenu();
+            }
+        }
+        
+        function removeDish(index) {
+            menu.splice(index, 1);
+            saveMenu();
+        }
+        
+        function saveMenu() {
+            fetch('save_menu.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(menu)
+            }).then(() => loadMenu());
+        }
+        
+        loadMenu();
+    </script>
+</body>
+</html>

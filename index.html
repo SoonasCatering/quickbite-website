@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickBite - Palestinsk Street Food</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f9f5f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #8b0000;
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+        }
+        .menu {
+            margin: 20px;
+        }
+        .menu-item {
+            background: white;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .contact {
+            margin: 20px;
+            font-size: 18px;
+        }
+        .order-btn {
+            background-color: #8b0000;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        QuickBite - Palestinsk Street Food 🚚
+    </header>
+    <div class="menu">
+        <h2>Dagens meny</h2>
+        <div id="menu-list">
+            <p>Laddar dagens rätter...</p>
+        </div>
+    </div>
+    <button class="order-btn" onclick="window.location.href='mailto:quickbite@foodtruck.com'">Beställ catering</button>
+    <div class="contact">
+        <p>📍 Stockholm, Sverige</p>
+        <p>📞 070-123 45 67</p>
+        <p><a href="https://www.instagram.com/quickbite.se/" target="_blank">Följ oss på Instagram</a></p>
+    </div>
+    <script>
+        fetch('menu.json')
+            .then(response => response.json())
+            .then(data => {
+                let menuList = document.getElementById('menu-list');
+                menuList.innerHTML = "";
+                data.forEach(item => {
+                    menuList.innerHTML += `<div class='menu-item'><h3>${item.name}</h3><p>${item.description}</p></div>`;
+                });
+            })
+            .catch(error => console.error('Fel vid hämtning av menyn:', error));
+    </script>
+</body>
+</html>
