@@ -45,7 +45,15 @@
     
     <div>
         <h3>Uppdatera Veckomeny</h3>
-        <textarea id="weekly-menu-input" placeholder="Skriv veckomenyn här..."></textarea><br>
+        <table style="width: 80%; margin: auto;">
+            <tr><td><b>Måndag</b></td><td><input type="text" id="monday-menu"></td></tr>
+            <tr><td><b>Tisdag</b></td><td><input type="text" id="tuesday-menu"></td></tr>
+            <tr><td><b>Onsdag</b></td><td><input type="text" id="wednesday-menu"></td></tr>
+            <tr><td><b>Torsdag</b></td><td><input type="text" id="thursday-menu"></td></tr>
+            <tr><td><b>Fredag</b></td><td><input type="text" id="friday-menu"></td></tr>
+            <tr><td><b>Lördag</b></td><td><input type="text" id="saturday-menu"></td></tr>
+            <tr><td><b>Söndag</b></td><td><input type="text" id="sunday-menu"></td></tr>
+        </table>
         <button onclick="saveWeeklyMenu()">Spara Veckomeny</button>
     </div>
     
@@ -61,7 +69,15 @@
     <script>
         // Ladda sparad data
         document.getElementById("daily-menu-input").value = localStorage.getItem("dailyMenu") || "";
-        document.getElementById("weekly-menu-input").value = localStorage.getItem("weeklyMenu") || "";
+        
+        let weeklyMenu = JSON.parse(localStorage.getItem("weeklyMenu")) || {};
+        document.getElementById("monday-menu").value = weeklyMenu.monday || "";
+        document.getElementById("tuesday-menu").value = weeklyMenu.tuesday || "";
+        document.getElementById("wednesday-menu").value = weeklyMenu.wednesday || "";
+        document.getElementById("thursday-menu").value = weeklyMenu.thursday || "";
+        document.getElementById("friday-menu").value = weeklyMenu.friday || "";
+        document.getElementById("saturday-menu").value = weeklyMenu.saturday || "";
+        document.getElementById("sunday-menu").value = weeklyMenu.sunday || "";
 
         let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
         renderGallery();
@@ -73,8 +89,16 @@
         }
         
         function saveWeeklyMenu() {
-            let menu = document.getElementById("weekly-menu-input").value;
-            localStorage.setItem("weeklyMenu", menu);
+            let weeklyMenu = {
+                monday: document.getElementById("monday-menu").value,
+                tuesday: document.getElementById("tuesday-menu").value,
+                wednesday: document.getElementById("wednesday-menu").value,
+                thursday: document.getElementById("thursday-menu").value,
+                friday: document.getElementById("friday-menu").value,
+                saturday: document.getElementById("saturday-menu").value,
+                sunday: document.getElementById("sunday-menu").value
+            };
+            localStorage.setItem("weeklyMenu", JSON.stringify(weeklyMenu));
             alert("Veckomenyn har sparats!");
         }
         
