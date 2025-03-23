@@ -7,9 +7,9 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
             margin: 0;
             padding: 0;
-            background-color: #f8f8f8;
         }
         .hero {
             display: flex;
@@ -18,36 +18,35 @@
             background: linear-gradient(to right, #f5ebe0, #ffffff);
             padding: 40px;
         }
-        .hero-text {
-            max-width: 50%;
-        }
         .hero img {
-            max-width: 45%;
+            width: 45%;
+            max-width: 600px;
             border-radius: 10px;
+        }
+        .hero-text {
+            width: 50%;
         }
         h1 {
             font-size: 2.5rem;
             color: #b22222;
+            margin: 0;
         }
-        .menu {
+        .menu, .static-menu, .catering, .gallery, .contact, .map {
             padding: 20px;
             background-color: white;
-            margin: 20px;
+            margin: 20px auto;
             border-radius: 10px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .menu h2 {
+            width: 80%;
             text-align: center;
         }
-        .menu-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
             border-bottom: 1px solid #ddd;
-        }
-        .contact-info, .gallery {
-            text-align: center;
-            padding: 20px;
         }
     </style>
 </head>
@@ -56,31 +55,27 @@
         <div class="hero-text">
             <h1>Upplev <span style="color: #b22222;">Autentisk</span> Palestinsk Mat</h1>
             <p>Quick Bite erbjuder en magisk kulinarisk upplevelse med noggrant utvalda menyer som hyllar de rika smakerna av Palestina.</p>
-            <button>Beställ Mat</button>
         </div>
-        <img src="food.jpg" alt="Palestinsk Mat">
+        <img src="images/hero.jpg" alt="Palestinsk Mat">
     </section>
     
     <section class="menu">
         <h2>Veckans Meny</h2>
-        <div class="menu-item"><span>Måndag</span> <span>Makloba</span></div>
-        <div class="menu-item"><span>Tisdag</span> <span>Musakhan</span></div>
-        <div class="menu-item"><span>Onsdag</span> <span>Shawarma</span></div>
-        <div class="menu-item"><span>Torsdag</span> <span>Falafel & Hummus</span></div>
-        <div class="menu-item"><span>Fredag</span> <span>Grillmix</span></div>
+        <table>
+            <tr>
+                <th>Dag</th>
+                <th>Rätt</th>
+            </tr>
+            <tbody id="weekly-menu"></tbody>
+        </table>
     </section>
 
-        <section id="sandwish-sallader">
-        <h2>Stående Meny</h2>
-        <div class="meny-item">
-            <img src="falafel.jpg" alt="Falafel-sallad">
-            <h3>Falafel-sallad</h3>
-            <p>Krispig falafel med färska grönsaker och tahinisås.</p>
-        </div>
-        <!-- Lägg till fler menyer här -->
+    <section class="static-menu">
+        <h2>Sandwichar & Sallader</h2>
+        <div id="static-menu-list">Laddar...</div>
     </section>
-
-    <section class="catering">
+    
+    <div class="catering">
         <h2>Boka Catering</h2>
         <form id="catering-form">
             <label>Antal gäster (minst 5):</label>
@@ -97,54 +92,45 @@
             <input type="email" id="email" required><br>
             <button type="submit">Skicka förfrågan</button>
         </form>
-    </section>
-
-    <section class="gallery">
+    </div>
+    
+    <div class="gallery">
         <h2>Galleri</h2>
         <div id="gallery-content">Laddar bilder...</div>
-    </section>
+    </div>
 
-    <section class="contact">
+    <div class="contact">
         <h2>Kontakt</h2>
         <p>📍 Gävlegatan 12A, Stockholm, Sweden 11330</p>
         <p>📞 070-123 45 67</p>
         <p><a href="https://www.instagram.com/quickbite.se/" target="_blank">Följ oss på Instagram</a></p>
-    </section>
+    </div>
 
     <div class="map">
-    <h2>Hitta oss</h2>
-    <iframe src="https://www.google.com/maps?q=Gävlegatan+12A,+Stockholm,+Sweden+11330&output=embed" width="100%" height="300"></iframe>
-</div>
+        <h2>Hitta oss</h2>
+        <iframe src="https://www.google.com/maps?q=Gävlegatan+12A,+Stockholm,+Sweden+11330&output=embed" width="100%" height="300"></iframe>
+    </div>
 
     <script>
-        // Menyuppdatering från adminpanelen (via LocalStorage)
-        document.getElementById("daily-menu").innerHTML = localStorage.getItem("dailyMenu") || "Ingen meny tillgänglig";
-        document.getElementById("weekly-menu").innerHTML = localStorage.getItem("weeklyMenu") || "Ingen meny tillgänglig";
-
-        // Bildgalleri laddning
-        let galleryContent = JSON.parse(localStorage.getItem("gallery")) || [];
-        document.getElementById("gallery-content").innerHTML = galleryContent.map(img => `<img src="${img}" width="150">`).join('');
-
-        // Hantera cateringförfrågan
-        document.getElementById("catering-form").addEventListener("submit", function(event) {
-            event.preventDefault();
-            let guests = document.getElementById("guests").value;
-            let date = document.getElementById("date").value;
-            let info = document.getElementById("info").value;
-            let name = document.getElementById("name").value;
-            let phone = document.getElementById("phone").value;
-            let email = document.getElementById("email").value;
-            
-            let mailtoLink = `mailto:quickbite@foodtruck.com?subject=Cateringförfrågan&body=
-                Namn: ${name}%0A
-                Telefon: ${phone}%0A
-                E-post: ${email}%0A
-                Antal gäster: ${guests}%0A
-                Datum: ${date}%0A
-                Önskemål: ${info}`;
-                
-            window.location.href = mailtoLink;
+        // Ladda veckomenyn från LocalStorage
+        let weeklyMenu = JSON.parse(localStorage.getItem("weeklyMenu")) || {};
+        let weeklyMenuTable = document.getElementById("weekly-menu");
+        weeklyMenuTable.innerHTML = "";
+        Object.entries(weeklyMenu).forEach(([day, dish]) => {
+            weeklyMenuTable.innerHTML += `<tr><td><b>${day.charAt(0).toUpperCase() + day.slice(1)}</b></td><td>${dish}</td></tr>`;
         });
+
+        // Ladda statiska menyn
+        let staticMenu = JSON.parse(localStorage.getItem("staticMenu")) || [];
+        let staticMenuList = document.getElementById("static-menu-list");
+        staticMenuList.innerHTML = "";
+        staticMenu.forEach(item => {
+            staticMenuList.innerHTML += `<div><h3>${item.name}</h3><p>${item.description}</p><img src="images/${item.image}" width="150"></div>`;
+        });
+
+        // Ladda bildgalleri
+        let galleryContent = JSON.parse(localStorage.getItem("gallery")) || [];
+        document.getElementById("gallery-content").innerHTML = galleryContent.map(img => `<img src="images/${img}" width="150">`).join('');
     </script>
 </body>
 </html>
