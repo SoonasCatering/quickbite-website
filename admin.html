@@ -11,12 +11,13 @@
             background-color: #f3f3f3;
             padding: 20px;
         }
-        .menu-item, .gallery-item {
+        .admin-section {
             background: white;
             padding: 15px;
-            margin: 10px;
+            margin: 10px auto;
             border-radius: 8px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            width: 80%;
         }
         button {
             margin-top: 10px;
@@ -35,17 +36,11 @@
     </style>
 </head>
 <body>
-    <h2>Adminpanel - Uppdatera hemsidan</h2>
+    <h2>Adminpanel - QuickBite</h2>
     
-    <div>
-        <h3>Uppdatera Dagens Meny</h3>
-        <textarea id="daily-menu-input" placeholder="Skriv dagens meny här..."></textarea><br>
-        <button onclick="saveDailyMenu()">Spara Dagens Meny</button>
-    </div>
-    
-    <div>
+    <div class="admin-section">
         <h3>Uppdatera Veckomeny</h3>
-        <table style="width: 80%; margin: auto;">
+        <table style="width: 100%; margin: auto;">
             <tr><td><b>Måndag</b></td><td><input type="text" id="monday-menu"></td></tr>
             <tr><td><b>Tisdag</b></td><td><input type="text" id="tuesday-menu"></td></tr>
             <tr><td><b>Onsdag</b></td><td><input type="text" id="wednesday-menu"></td></tr>
@@ -57,19 +52,22 @@
         <button onclick="saveWeeklyMenu()">Spara Veckomeny</button>
     </div>
     
-    <div>
-        <h3>Ladda upp Bild till Galleri</h3>
-        <input type="file" id="image-upload" accept="image/*"><br>
-        <button onclick="uploadImage()">Lägg till Bild</button>
+    <div class="admin-section">
+        <h3>Uppdatera Stående Meny</h3>
+        <input type="text" id="static-name" placeholder="Namn på rätt">
+        <textarea id="static-description" placeholder="Beskrivning"></textarea>
+        <input type="file" id="static-image" accept="image/*"><br>
+        <button onclick="addStaticMenuItem()">Lägg till</button>
     </div>
     
-    <h3>Nuvarande Bilder</h3>
-    <div id="gallery-preview">Inga bilder än...</div>
+    <div class="admin-section">
+        <h3>Ladda upp Bild till Galleri</h3>
+        <input type="file" id="gallery-upload" accept="image/*"><br>
+        <button onclick="uploadGalleryImage()">Lägg till Bild</button>
+    </div>
     
     <script>
         // Ladda sparad data
-        document.getElementById("daily-menu-input").value = localStorage.getItem("dailyMenu") || "";
-        
         let weeklyMenu = JSON.parse(localStorage.getItem("weeklyMenu")) || {};
         document.getElementById("monday-menu").value = weeklyMenu.monday || "";
         document.getElementById("tuesday-menu").value = weeklyMenu.tuesday || "";
@@ -78,15 +76,6 @@
         document.getElementById("friday-menu").value = weeklyMenu.friday || "";
         document.getElementById("saturday-menu").value = weeklyMenu.saturday || "";
         document.getElementById("sunday-menu").value = weeklyMenu.sunday || "";
-
-        let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
-        renderGallery();
-
-        function saveDailyMenu() {
-            let menu = document.getElementById("daily-menu-input").value;
-            localStorage.setItem("dailyMenu", menu);
-            alert("Dagens meny har sparats!");
-        }
         
         function saveWeeklyMenu() {
             let weeklyMenu = {
@@ -102,22 +91,36 @@
             alert("Veckomenyn har sparats!");
         }
         
-        function uploadImage() {
-            let file = document.getElementById("image-upload").files[0];
-            if (file) {
+        function addStaticMenuItem() {
+            let staticMenu = JSON.parse(localStorage.getItem("staticMenu")) || [];
+            let name = document.getElementById("static-name").value;
+            let description = document.getElementById("static-description").value;
+            let file = document.getElementById("static-image").files[0];
+            
+            if (name && description && file) {
                 let reader = new FileReader();
                 reader.onload = function(e) {
-                    gallery.push(e.target.result);
-                    localStorage.setItem("gallery", JSON.stringify(gallery));
-                    renderGallery();
+                    staticMenu.push({ name, description, image: e.target.result });
+                    localStorage.setItem("staticMenu", JSON.stringify(staticMenu));
+                    alert("Rätt har lagts till!");
                 };
                 reader.readAsDataURL(file);
             }
         }
         
-        function renderGallery() {
-            let galleryPreview = document.getElementById("gallery-preview");
-            galleryPreview.innerHTML = gallery.map(img => `<img src="${img}" width="100">`).join(' ');
+        function uploadGalleryImage() {
+            let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
+            let file = document.getElementById("gallery-upload").files[0];
+            
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    gallery.push(e.target.result);
+                    localStorage.setItem("gallery", JSON.stringify(gallery));
+                    alert("Bild har lagts till i galleriet!");
+                };
+                reader.readAsDataURL(file);
+            }
         }
     </script>
 </body>
