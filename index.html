@@ -144,7 +144,10 @@
             staticMenuList.innerHTML += `<div><h3>${item.name}</h3><p>${item.description}</p><img src="images/${item.image}" width="150"></div>`;
         });
 
-        let galleryContent = JSON.parse(localStorage.getItem("gallery")) || [];
+        let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
+document.getElementById("gallery-content").innerHTML = gallery.map(img => 
+    `<img src="${img}" width="150" style="margin: 5px; border-radius: 10px;">`
+).join('');
         document.getElementById("gallery-content").innerHTML = galleryContent.map(img => `<img src="images/${img}" width="150">`).join('');
     </script>
 </body>
