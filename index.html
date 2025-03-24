@@ -40,13 +40,23 @@
             width: 80%;
             text-align: center;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .static-menu-items {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
         }
-        th, td {
+        .static-menu-item {
+            background: #fff;
             padding: 10px;
-            border-bottom: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            text-align: center;
+        }
+        .static-menu-item img {
+            width: 100%;
+            border-radius: 8px;
         }
         .catering form {
             display: flex;
@@ -93,36 +103,27 @@
         </table>
     </section>
 
-  <section class="static-menu">
+    <section class="static-menu">
         <h2>Sandwichar & Sallader</h2>
-        <div class="static-menu-items" id="static-menu-list">Laddar...</div>
+        <div class="static-menu-items" id="static-menu-list"></div>
     </section>
-    
-    <script>
-        let staticMenu = JSON.parse(localStorage.getItem("staticMenu")) || [];
-        let staticMenuList = document.getElementById("static-menu-list");
-        staticMenuList.innerHTML = "";
-        staticMenu.forEach(item => {
-            staticMenuList.innerHTML += `<div class='static-menu-item'><h3>${item.name}</h3><p>${item.description}</p><img src="${item.image}" alt="${item.name}"></div>`;
-        });
-    </script>
-    
+
     <div class="catering">
         <h2>Boka Catering</h2>
         <form id="catering-form">
             <input type="number" id="guests" min="5" placeholder="Antal gäster (minst 5)" required>
             <input type="date" id="date" required>
-            <textarea id="info" placeholder="Önskemål"></textarea>
+            <textarea id="info" placeholder="Ange särskilda önskemål eller event så tar jag fram en fantastisk meny som passar ändamålet"></textarea>
             <input type="text" id="name" placeholder="Namn" required>
             <input type="tel" id="phone" placeholder="Telefon" required>
             <input type="email" id="email" placeholder="E-post" required>
             <button type="submit">Skicka förfrågan</button>
         </form>
     </div>
-    
+
     <div class="gallery">
         <h2>Galleri</h2>
-        <div id="gallery-content">Laddar bilder...</div>
+        <div id="gallery-content"></div>
     </div>
 
     <div class="contact">
@@ -139,25 +140,47 @@
 
     <script>
         let weekdays = { "monday": "Måndag", "tuesday": "Tisdag", "wednesday": "Onsdag", "thursday": "Torsdag", "friday": "Fredag", "saturday": "Lördag", "sunday": "Söndag" };
-        let weeklyMenu = JSON.parse(localStorage.getItem("weeklyMenu")) || {};
-        let weeklyMenuTable = document.getElementById("weekly-menu");
-        weeklyMenuTable.innerHTML = "";
-        Object.entries(weeklyMenu).forEach(([day, dish]) => {
-            weeklyMenuTable.innerHTML += `<tr><td><b>${weekdays[day]}</b></td><td>${dish}</td></tr>`;
+
+        function loadWeeklyMenu() {
+            let weeklyMenu = JSON.parse(localStorage.getItem("weeklyMenu")) || {};
+            let menuTable = document.getElementById("weekly-menu");
+            menuTable.innerHTML = "";
+            Object.entries(weekdays).forEach(([key, day]) => {
+                let dish = weeklyMenu[key] || "Ej uppdaterat";
+                menuTable.innerHTML += `<tr><td><b>${day}</b></td><td>${dish}</td></tr>`;
+            });
+        }
+
+        function loadStaticMenu() {
+            let staticMenu = JSON.parse(localStorage.getItem("staticMenu")) || [];
+            let menuList = document.getElementById("static-menu-list");
+            menuList.innerHTML = "";
+            staticMenu.forEach(item => {
+                menuList.innerHTML += `
+                    <div class="static-menu-item">
+                        <h3>${item.name}</h3>
+                        <p>${item.description}</p>
+                        <img src="${item.image}" alt="${item.name}">
+                    </div>`;
+            });
+        }
+
+        function loadGallery() {
+            let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
+            let galleryContent = document.getElementById("gallery-content");
+            galleryContent.innerHTML = gallery.map(img => 
+                `<img src="${img}" width="150" style="margin: 5px; border-radius: 10px;">`
+            ).join('');
+        }
+
+        document.getElementById("catering-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            alert("Cateringförfrågan skickad! Vi hör av oss snart.");
         });
 
-        let staticMenu = JSON.parse(localStorage.getItem("staticMenu")) || [];
-        let staticMenuList = document.getElementById("static-menu-list");
-        staticMenuList.innerHTML = "";
-        staticMenu.forEach(item => {
-            staticMenuList.innerHTML += `<div><h3>${item.name}</h3><p>${item.description}</p><img src="images/${item.image}" width="150"></div>`;
-        });
-
-        let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
-document.getElementById("gallery-content").innerHTML = gallery.map(img => 
-    `<img src="${img}" width="150" style="margin: 5px; border-radius: 10px;">`
-).join('');
-        document.getElementById("gallery-content").innerHTML = galleryContent.map(img => `<img src="images/${img}" width="150">`).join('');
+        loadWeeklyMenu();
+        loadStaticMenu();
+        loadGallery();
     </script>
 </body>
 </html>
