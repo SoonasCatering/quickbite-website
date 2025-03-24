@@ -40,6 +40,17 @@
             width: 80%;
             text-align: center;
         }
+        .menu table {
+            width: 80%; 
+            border-collapse: collapse;
+            margin: 0 auto; /* Centrerar tabellen horisontellt */
+            text-align: center;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: center; /* Centrerar texten i tabellen */
+        }
         .static-menu-items {
             display: flex;
             flex-wrap: wrap;
@@ -113,7 +124,7 @@
         <form id="catering-form">
             <input type="number" id="guests" min="5" placeholder="Antal gäster (minst 5)" required>
             <input type="date" id="date" required>
-            <textarea id="info" placeholder="Ange särskilda önskemål eller event så tar jag fram en fantastisk meny som passar ändamålet"></textarea>
+            <textarea id="info" placeholder="Ange här era särskilda önskemål eller typ av event så tar vi fram en fantastisk meny som passar till ändamålet och det tillsammans med kostnadsförslag"></textarea>
             <input type="text" id="name" placeholder="Namn" required>
             <input type="tel" id="phone" placeholder="Telefon" required>
             <input type="email" id="email" placeholder="E-post" required>
