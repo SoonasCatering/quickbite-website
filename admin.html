@@ -33,6 +33,16 @@
             margin: 5px;
             width: 80%;
         }
+        .menu-item, .static-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+            margin: 5px;
+        }
         .gallery-preview img {
             width: 100px;
             margin: 5px;
@@ -45,15 +55,7 @@
     
     <div class="admin-section">
         <h3>Uppdatera Veckomeny</h3>
-        <table style="width: 100%; margin: auto;">
-            <tr><td><b>Måndag</b></td><td><input type="text" id="monday-menu"></td></tr>
-            <tr><td><b>Tisdag</b></td><td><input type="text" id="tuesday-menu"></td></tr>
-            <tr><td><b>Onsdag</b></td><td><input type="text" id="wednesday-menu"></td></tr>
-            <tr><td><b>Torsdag</b></td><td><input type="text" id="thursday-menu"></td></tr>
-            <tr><td><b>Fredag</b></td><td><input type="text" id="friday-menu"></td></tr>
-            <tr><td><b>Lördag</b></td><td><input type="text" id="saturday-menu"></td></tr>
-            <tr><td><b>Söndag</b></td><td><input type="text" id="sunday-menu"></td></tr>
-        </table>
+        <div id="weekly-menu-list"></div>
         <button onclick="saveWeeklyMenu()">Spara Veckomeny</button>
     </div>
     
@@ -63,6 +65,8 @@
         <textarea id="static-description" placeholder="Beskrivning"></textarea>
         <input type="file" id="static-image" accept="image/*"><br>
         <button onclick="addStaticMenuItem()">Lägg till</button>
+        <h4>Nuvarande Stående Meny</h4>
+        <div id="static-menu-preview"></div>
     </div>
     
     <div class="admin-section">
@@ -70,48 +74,87 @@
         <input type="file" id="gallery-upload" accept="image/*"><br>
         <button onclick="uploadGalleryImage()">Lägg till Bild</button>
         <h4>Nuvarande Bilder</h4>
-        <div id="gallery-preview" class="gallery-preview">Laddar bilder...</div>
+        <div id="gallery-preview" class="gallery-preview"></div>
     </div>
     
     <script>
+        let weekdays = { "monday": "Måndag", "tuesday": "Tisdag", "wednesday": "Onsdag", "thursday": "Torsdag", "friday": "Fredag", "saturday": "Lördag", "sunday": "Söndag" };
+
+        function loadWeeklyMenu() {
+            let weeklyMenu = JSON.parse(localStorage.getItem("weeklyMenu")) || {};
+            let menuList = document.getElementById("weekly-menu-list");
+            menuList.innerHTML = "";
+            Object.entries(weekdays).forEach(([key, day]) => {
+                menuList.innerHTML += `
+                    <div class="menu-item">
+                        <span>${day}</span>
+                        <input type="text" id="${key}-menu" value="${weeklyMenu[key] || ''}">
+                    </div>`;
+            });
+        }
+
         function saveWeeklyMenu() {
-            let weeklyMenu = {
-                monday: document.getElementById("monday-menu").value,
-                tuesday: document.getElementById("tuesday-menu").value,
-                wednesday: document.getElementById("wednesday-menu").value,
-                thursday: document.getElementById("thursday-menu").value,
-                friday: document.getElementById("friday-menu").value,
-                saturday: document.getElementById("saturday-menu").value,
-                sunday: document.getElementById("sunday-menu").value
-            };
+            let weeklyMenu = {};
+            Object.keys(weekdays).forEach(day => {
+                weeklyMenu[day] = document.getElementById(`${day}-menu`).value;
+            });
             localStorage.setItem("weeklyMenu", JSON.stringify(weeklyMenu));
             alert("Veckomenyn har sparats!");
         }
-        
-        async function uploadGalleryImage() {
-            let file = document.getElementById("gallery-upload").files[0];
-            if (!file) return alert("Välj en bild att ladda upp!");
-            
-            let formData = new FormData();
-            formData.append("image", file);
-            
-            let response = await fetch("https://api.imgbb.com/1/upload?key=be1946b0733e89762a51d0259e7017b8", {
-                method: "POST",
-                body: formData
-            });
-            
-            let data = await response.json();
-            if (data.success) {
-                let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
-                gallery.push(data.data.url);
-                localStorage.setItem("gallery", JSON.stringify(gallery));
-                renderGallery();
-            } else {
-                alert("Misslyckades med att ladda upp bilden!");
+
+        function addStaticMenuItem() {
+            let staticMenu = JSON.parse(localStorage.getItem("staticMenu")) || [];
+            let name = document.getElementById("static-name").value;
+            let description = document.getElementById("static-description").value;
+            let file = document.getElementById("static-image").files[0];
+
+            if (name && description && file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    staticMenu.push({ name, description, image: e.target.result });
+                    localStorage.setItem("staticMenu", JSON.stringify(staticMenu));
+                    loadStaticMenu();
+                };
+                reader.readAsDataURL(file);
             }
         }
-        
-        function renderGallery() {
+
+        function loadStaticMenu() {
+            let staticMenu = JSON.parse(localStorage.getItem("staticMenu")) || [];
+            let menuPreview = document.getElementById("static-menu-preview");
+            menuPreview.innerHTML = "";
+            staticMenu.forEach((item, index) => {
+                menuPreview.innerHTML += `
+                    <div class="static-item">
+                        <span>${item.name} - ${item.description}</span>
+                        <button onclick="deleteStaticMenuItem(${index})">❌</button>
+                    </div>`;
+            });
+        }
+
+        function deleteStaticMenuItem(index) {
+            let staticMenu = JSON.parse(localStorage.getItem("staticMenu")) || [];
+            staticMenu.splice(index, 1);
+            localStorage.setItem("staticMenu", JSON.stringify(staticMenu));
+            loadStaticMenu();
+        }
+
+        function uploadGalleryImage() {
+            let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
+            let file = document.getElementById("gallery-upload").files[0];
+
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    gallery.push(e.target.result);
+                    localStorage.setItem("gallery", JSON.stringify(gallery));
+                    loadGallery();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function loadGallery() {
             let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
             let galleryPreview = document.getElementById("gallery-preview");
             galleryPreview.innerHTML = gallery.map((img, index) => 
@@ -119,15 +162,17 @@
                  <button onclick="deleteGalleryImage(${index})">❌ Ta bort</button></div>`
             ).join('');
         }
-        
+
         function deleteGalleryImage(index) {
             let gallery = JSON.parse(localStorage.getItem("gallery")) || [];
             gallery.splice(index, 1);
             localStorage.setItem("gallery", JSON.stringify(gallery));
-            renderGallery();
+            loadGallery();
         }
-        
-        renderGallery();
+
+        loadWeeklyMenu();
+        loadStaticMenu();
+        loadGallery();
     </script>
 </body>
 </html>
