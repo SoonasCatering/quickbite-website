@@ -44,6 +44,28 @@
     <h2>Adminpanel - QuickBite</h2>
     
     <div class="admin-section">
+        <h3>Uppdatera Veckomeny</h3>
+        <table style="width: 100%; margin: auto;">
+            <tr><td><b>Måndag</b></td><td><input type="text" id="monday-menu"></td></tr>
+            <tr><td><b>Tisdag</b></td><td><input type="text" id="tuesday-menu"></td></tr>
+            <tr><td><b>Onsdag</b></td><td><input type="text" id="wednesday-menu"></td></tr>
+            <tr><td><b>Torsdag</b></td><td><input type="text" id="thursday-menu"></td></tr>
+            <tr><td><b>Fredag</b></td><td><input type="text" id="friday-menu"></td></tr>
+            <tr><td><b>Lördag</b></td><td><input type="text" id="saturday-menu"></td></tr>
+            <tr><td><b>Söndag</b></td><td><input type="text" id="sunday-menu"></td></tr>
+        </table>
+        <button onclick="saveWeeklyMenu()">Spara Veckomeny</button>
+    </div>
+    
+    <div class="admin-section">
+        <h3>Uppdatera Stående Meny</h3>
+        <input type="text" id="static-name" placeholder="Namn på rätt">
+        <textarea id="static-description" placeholder="Beskrivning"></textarea>
+        <input type="file" id="static-image" accept="image/*"><br>
+        <button onclick="addStaticMenuItem()">Lägg till</button>
+    </div>
+    
+    <div class="admin-section">
         <h3>Hantera Galleri</h3>
         <input type="file" id="gallery-upload" accept="image/*"><br>
         <button onclick="uploadGalleryImage()">Lägg till Bild</button>
@@ -52,6 +74,20 @@
     </div>
     
     <script>
+        function saveWeeklyMenu() {
+            let weeklyMenu = {
+                monday: document.getElementById("monday-menu").value,
+                tuesday: document.getElementById("tuesday-menu").value,
+                wednesday: document.getElementById("wednesday-menu").value,
+                thursday: document.getElementById("thursday-menu").value,
+                friday: document.getElementById("friday-menu").value,
+                saturday: document.getElementById("saturday-menu").value,
+                sunday: document.getElementById("sunday-menu").value
+            };
+            localStorage.setItem("weeklyMenu", JSON.stringify(weeklyMenu));
+            alert("Veckomenyn har sparats!");
+        }
+        
         async function uploadGalleryImage() {
             let file = document.getElementById("gallery-upload").files[0];
             if (!file) return alert("Välj en bild att ladda upp!");
