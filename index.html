@@ -48,6 +48,29 @@
             padding: 10px;
             border-bottom: 1px solid #ddd;
         }
+        .catering form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .catering input, .catering textarea {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .catering button {
+            background-color: #b22222;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -78,18 +101,12 @@
     <div class="catering">
         <h2>Boka Catering</h2>
         <form id="catering-form">
-            <label>Antal gäster (minst 5):</label>
-            <input type="number" id="guests" min="5" required><br>
-            <label>Datum:</label>
-            <input type="date" id="date" required><br>
-            <label>Önskemål:</label>
-            <textarea id="info"></textarea><br>
-            <label>Namn:</label>
-            <input type="text" id="name" required><br>
-            <label>Telefon:</label>
-            <input type="tel" id="phone" required><br>
-            <label>E-post:</label>
-            <input type="email" id="email" required><br>
+            <input type="number" id="guests" min="5" placeholder="Antal gäster (minst 5)" required>
+            <input type="date" id="date" required>
+            <textarea id="info" placeholder="Önskemål"></textarea>
+            <input type="text" id="name" placeholder="Namn" required>
+            <input type="tel" id="phone" placeholder="Telefon" required>
+            <input type="email" id="email" placeholder="E-post" required>
             <button type="submit">Skicka förfrågan</button>
         </form>
     </div>
@@ -112,15 +129,14 @@
     </div>
 
     <script>
-        // Ladda veckomenyn från LocalStorage
+        let weekdays = { "monday": "Måndag", "tuesday": "Tisdag", "wednesday": "Onsdag", "thursday": "Torsdag", "friday": "Fredag", "saturday": "Lördag", "sunday": "Söndag" };
         let weeklyMenu = JSON.parse(localStorage.getItem("weeklyMenu")) || {};
         let weeklyMenuTable = document.getElementById("weekly-menu");
         weeklyMenuTable.innerHTML = "";
         Object.entries(weeklyMenu).forEach(([day, dish]) => {
-            weeklyMenuTable.innerHTML += `<tr><td><b>${day.charAt(0).toUpperCase() + day.slice(1)}</b></td><td>${dish}</td></tr>`;
+            weeklyMenuTable.innerHTML += `<tr><td><b>${weekdays[day]}</b></td><td>${dish}</td></tr>`;
         });
 
-        // Ladda statiska menyn
         let staticMenu = JSON.parse(localStorage.getItem("staticMenu")) || [];
         let staticMenuList = document.getElementById("static-menu-list");
         staticMenuList.innerHTML = "";
@@ -128,7 +144,6 @@
             staticMenuList.innerHTML += `<div><h3>${item.name}</h3><p>${item.description}</p><img src="images/${item.image}" width="150"></div>`;
         });
 
-        // Ladda bildgalleri
         let galleryContent = JSON.parse(localStorage.getItem("gallery")) || [];
         document.getElementById("gallery-content").innerHTML = galleryContent.map(img => `<img src="images/${img}" width="150">`).join('');
     </script>
