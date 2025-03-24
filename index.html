@@ -93,10 +93,19 @@
         </table>
     </section>
 
-    <section class="static-menu">
+  <section class="static-menu">
         <h2>Sandwichar & Sallader</h2>
-        <div id="static-menu-list">Laddar...</div>
+        <div class="static-menu-items" id="static-menu-list">Laddar...</div>
     </section>
+    
+    <script>
+        let staticMenu = JSON.parse(localStorage.getItem("staticMenu")) || [];
+        let staticMenuList = document.getElementById("static-menu-list");
+        staticMenuList.innerHTML = "";
+        staticMenu.forEach(item => {
+            staticMenuList.innerHTML += `<div class='static-menu-item'><h3>${item.name}</h3><p>${item.description}</p><img src="${item.image}" alt="${item.name}"></div>`;
+        });
+    </script>
     
     <div class="catering">
         <h2>Boka Catering</h2>
